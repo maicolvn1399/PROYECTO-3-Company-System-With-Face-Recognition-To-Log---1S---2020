@@ -1,6 +1,8 @@
 #Class to register a new user
 
-class NewUser():
+users = []
+class NewUser:
+
     def __init__(self,name,age,ID,email,address,images):
         self.name = name
         self.age = age
@@ -8,6 +10,12 @@ class NewUser():
         self.email = email
         self.address = address
         self.images = images
+
+    def getUsers(self):
+        return self.users
+
+    def setUsers(self,users):
+        self.users = users
 
     def getName(self):
         return self.name
@@ -38,3 +46,23 @@ class NewUser():
 
     def setAddress(self,address):
         self.address = address
+
+    def getImages(self):
+        return self.images
+
+    def setImages(self,images):
+        self.images = images
+
+    def show(self):
+        print(self.name)
+        print(self.age)
+        print(self.address)
+        print(self.email)
+        print(self.ID)
+        print(self.images)
+        print(users)
+        print(len(users))
+
+    def appendUser(self):
+        users.append(self)
+
