@@ -9,8 +9,6 @@ import glob
 from pathlib import Path
 
 
-
-
 #Initialize variables
 face_locations = []
 face_encodings = []
@@ -38,7 +36,7 @@ class FaceRecognition:
 
         for pic in self.person_image:
             self.known_person_encodings += [face_recognition.face_encodings(pic)[0]]
-            print("Encondings Done")
+            print("Encodings Done")
 
         while True:
             #grab a single frame of the video

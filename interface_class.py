@@ -90,7 +90,6 @@ class Window:
 
             path_to_image = tkinter.filedialog.askopenfilename(initialdir = "./Desktop/Faces/" ,title='Save file', filetypes=[("JPG",".jpg"),("GIF",".gif")],defaultextension=[("JPG",".jpg"),("GIF",".gif")])
             print(path_to_image)
-            #newPath = "PROYECTO-3-Company-System-With-Face-Recognition-To-Log---1S---2020"+"NOMBRE"+".jpg"
             newPath = self.entryName.get()+".jpg"
             print(self.entryName.get()+".jpg")
             print('Copied image' )

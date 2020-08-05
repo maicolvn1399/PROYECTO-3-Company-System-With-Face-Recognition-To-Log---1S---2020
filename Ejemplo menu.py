@@ -5,8 +5,6 @@ from tkinter import *
 import sqlite3
 
 class C3App(tk.Tk):
-    
-    
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
