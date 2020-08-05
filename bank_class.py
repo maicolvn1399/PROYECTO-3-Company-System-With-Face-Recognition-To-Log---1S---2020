@@ -30,9 +30,9 @@ class GetBankInformation:
         index = result.text
         cut = index.find("NUM_VALOR")
         cut2 = index.find("/NUM_VALOR")
-        data = result.text[cut:cut2].replace("NUM_VALOR&gt;","").replace("&lt;","")
-        print(float(data))
-        return float(data)
+        exchangeRate = result.text[cut:cut2].replace("NUM_VALOR&gt;","").replace("&lt;","")
+        print(float(exchangeRate))
+        return float(exchangeRate)
 
 info = GetBankInformation()
 info.getExchangeRate()
