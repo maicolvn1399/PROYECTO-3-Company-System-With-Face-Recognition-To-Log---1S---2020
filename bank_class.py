@@ -18,8 +18,8 @@ class GetBankInformation:
                              "CorreoElectronico":"maicolvn1399@gmail.com",
                              "Token":"VLCMA9MD2V",
                              }
-        
-    def get_my_informtion(self):
+
+    def get_my_information(self):
         """Returns information from the user that is requesting the exchange rate"""
         print(self.myInformation)
         return self.myInformation
