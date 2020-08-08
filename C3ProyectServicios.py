@@ -7,6 +7,7 @@ class Servicio:
     # connection dir property
     db_name = 'database.db'
 
+
     def __init__(self, window):
         # Initializations 
         self.wind = window
@@ -47,6 +48,9 @@ class Servicio:
         # Filling the Rows
         self.get_products()
 
+    def getDatabase(self):
+        return self.db_name
+
     # Function to Execute Database Querys
     def run_query(self, query, parameters = ()):
         with sqlite3.connect(self.db_name) as conn:
@@ -57,6 +61,7 @@ class Servicio:
 
     # Get Products from Database
     def get_products(self):
+        list = []
         # cleaning Table 
         records = self.tree.get_children()
         for element in records:
@@ -66,6 +71,12 @@ class Servicio:
         db_rows = self.run_query(query)
         # filling data
         for row in db_rows:
+            print(row)
+            a,b,c = row
+            list += [b+" - "+"₡"+str(c)]
+            print(list)
+
+
             self.tree.insert('', 0, text = row[1], values = row[2])
 
     # User Input Validation
@@ -135,6 +146,8 @@ class Servicio:
         self.edit_wind.destroy()
         self.message['text'] = '  {} fue actualizado satisfactoriamente'.format(name)
         self.get_products()
+
+
 
 if __name__ == '__main__':
     window = Tk()

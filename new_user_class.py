@@ -66,3 +66,22 @@ class NewUser:
     def appendUser(self):
         users.append(self)
 
+    def readFile(self):
+        """This function reads the file of the users
+        and return the content in a list"""
+        path = "Users.txt"
+        file = open(path)
+        content = file.readlines()
+        file.close()
+        print(content)
+        return content
+
+    def writeInFile(self):
+        """This function writes the new user on the file"""
+        path = "Users.txt"
+        file = open(path, "a")
+        data = self.getName()+","+str(self.getAge())+","+self.getAddress()+","+self.getEmail()+","+self.getID()+","+self.getImages()
+        file.write(data + "\n")
+        file.close()
+
+
