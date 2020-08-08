@@ -55,7 +55,7 @@ class Invoice:
         doc.set_item_tax_rate(0)
 
         #transactions detail
-        doc.add_transaction(Transaction("Paypal",111,self.invoiceDate,1))
+        doc.add_transaction(Transaction("Paypal",self.invoiceID,self.invoiceDate,1))
 
         #Optional
         doc.set_bottom_tip("Email: RMtech@gmail.com<br />Don't hesitate to contact us for any questions.")
