@@ -9,9 +9,8 @@ import random
 
 
 class Invoice:
-    def __init__(self,invoiceNumber,invoiceName,invoiceAddress,invoiceID,invoiceEmail,invoiceDate,invoiceExpiringDate,invoiceService):
-        self.invoiceNum = invoiceNumber
-        self.invoiceNumber = self.invoiceNum
+    def __init__(self,invoiceNumber,invoiceName,invoiceID,invoiceEmail,invoiceDate,invoiceExpiringDate,invoiceService,servicePrice,serviceDiscount,invoiceAddress):
+        self.invoiceNumber = invoiceNumber
         self.invoiceName = invoiceName
         self.invoiceAddress = invoiceAddress
         self.invoiceID = invoiceID
@@ -19,17 +18,19 @@ class Invoice:
         self.invoiceDate = invoiceDate
         self.invoiceExpiringDate = invoiceExpiringDate
         self.invoiceService = invoiceService
+        self.servicePrice = servicePrice
+        self.serviceDiscount = serviceDiscount
 
     def generateInvoice(self):
         doc = SimpleInvoice(self.invoiceName + " - " + str(self.invoiceNumber) + ".pdf")
         #Paid stamp
         doc.is_paid = False
 
-        doc.invoice_info = InvoiceInfo(1023, datetime.now(), datetime.today() + timedelta(days=3))
+        doc.invoice_info = InvoiceInfo(self.invoiceNumber, self.invoiceDate, self.invoiceExpiringDate)
 
         #Service provider
         doc.service_provider_info = ServiceProviderInfo(
-            name= "Jardineria",
+            name= "R&M Tech",
             street = "My street",
             city = "My City",
             state = "My State",
@@ -39,18 +40,22 @@ class Invoice:
         )
 
         #client info
-        doc.client_info = ClientInfo(email=self.invoiceEmail)
+        doc.client_info = ClientInfo(name= self.invoiceName,
+                                     client_id  = self.invoiceID,
+                                     email=self.invoiceEmail,
+                                     street = self.invoiceAddress
+                                     )
 
         #add item
-        doc.add_item(Item("Item","Item Description",1,"1.1"))
+        doc.add_item(Item(self.invoiceService,"",1,str(self.servicePrice)))
+
 
 
         #tax rate
-        doc.set_item_tax_rate(20)
+        doc.set_item_tax_rate(0)
 
         #transactions detail
-        doc.add_transaction(Transaction("Paypal",111,datetime.now(),1))
-        doc.add_transaction(Transaction('Stripe', 222, date.today(), 2))
+        doc.add_transaction(Transaction("Paypal",111,self.invoiceDate,1))
 
         #Optional
         doc.set_bottom_tip("Email: RMtech@gmail.com<br />Don't hesitate to contact us for any questions.")

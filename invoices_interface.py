@@ -4,6 +4,7 @@ from tkinter import *
 from datetime import datetime, date,timedelta
 from tkcalendar import Calendar,DateEntry
 from C3ProyectServicios import Servicio
+from invoice_class import Invoice
 from tkinter import messagebox
 import sqlite3
 
@@ -125,7 +126,7 @@ class InvoicesInterface:
         db_rows = self.run_query(query)
         # filling data
         for row in db_rows:
-            print(row)
+            #print(row)
             #print(row[2:5])
             self.tree.insert("",0,text=row[1],values=row[2:])
 
@@ -154,7 +155,7 @@ class InvoicesInterface:
             self.run_query(query,parameters)
             self.message['text'] = "{}'s invoice added succesfully".format(self.name.get())
             self.message['fg'] = "green"
-
+            self.get_single_data(self.name.get())
             self.name.delete(0,END)
             self.address.delete(0,END)
             self.ID_.delete(0,END)
@@ -181,7 +182,21 @@ class InvoicesInterface:
         self.message['fg'] = "blue"
         self.get_invoices()
 
-    
+    def get_single_data(self,invoiceName):
+        list = []
+        # getting data
+        query = 'SELECT * FROM invoices ORDER BY name DESC'
+        db_rows = self.run_query(query)
+        # filling data
+        for row in db_rows:
+            print(row[1])
+            if row[1] == invoiceName:
+                print(row)
+                invoiceNumber, invoiceToName, invoiceID, invoiceEmail, invoiceDate, invoiceExpiringDate, invoiceService, servicePrice, serviceDiscount, invoiceAddress = row
+        newInvoice = Invoice(invoiceNumber, invoiceToName, invoiceID, invoiceEmail, invoiceDate, invoiceExpiringDate, invoiceService, servicePrice, serviceDiscount, invoiceAddress)
+        newInvoice.generateInvoice()
+        newInvoice.moveInvoices()
+
 
 
 if __name__ == '__main__':
