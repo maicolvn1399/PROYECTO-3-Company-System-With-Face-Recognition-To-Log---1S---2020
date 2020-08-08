@@ -1,6 +1,7 @@
 import sqlite3
 from tkinter import ttk
 from tkinter import *
+from datetime import datetime, date,timedelta
 from tkcalendar import Calendar,DateEntry
 from C3ProyectServicios import Servicio
 from tkinter import messagebox
@@ -45,7 +46,7 @@ class InvoicesInterface:
         # Date input
         Label(frame, text="Date: ").grid(row=5, column=0)
         self.date = DateEntry(frame, width=12, background='darkblue',
-                              foreground='white', borderwidth=2)
+                              foreground='white', borderwidth=2,date_pattern='YYYY-MM-DD')
         self.date.grid(row=5, column=1)
 
         # Service input
@@ -83,8 +84,6 @@ class InvoicesInterface:
         #Buttons
         Button(text="DELETE",command = self.delete_invoice).grid(row=11,column=0,sticky=W+E)
 
-
-
         #Filling rows of table
         self.get_invoices()
 
@@ -109,9 +108,10 @@ class InvoicesInterface:
         db_rows = self.run_query_services(query)
         # filling data
         for row in db_rows:
+            #print(row)
             itemNum, service, price = row
             list += [service + " - " + "₡" + str(price)]
-            print(list)
+
         return list
 
     def get_invoices(self):
@@ -125,8 +125,8 @@ class InvoicesInterface:
         db_rows = self.run_query(query)
         # filling data
         for row in db_rows:
-            print(row[0])
-            print(row[2:5])
+            print(row)
+            #print(row[2:5])
             self.tree.insert("",0,text=row[1],values=row[2:])
 
     def validation(self):
@@ -136,16 +136,31 @@ class InvoicesInterface:
         if self.validation():
             query = "INSERT INTO invoices VALUES(NULL,?,?,?,?,?,?,?,?,?)"
             service_text = self.service.get()
+            service_textCopy = service_text.replace(" - ₡","")
+            #print(service_text)
 
-            parameters = (self.name.get(),self.date.get(),self.date.get(),self.email.get(),self.address.get(),self.service.get(),20,self.discount.get(),20)
+            price = ""
+            service = ""
+
+            for i in service_textCopy:
+                if not i.isalpha():
+                    price += i
+                else:
+                    service += i
+
+            print(self.ID_.get())
+            #parameters = (self.name.get(),self.date.get(),self.date.get_date()+timedelta(days=3),self.email.get(),self.address.get(),service,float(price),self.discount.get(),self.ID_.get())
+            parameters = (self.name.get(),self.ID_.get(),self.email.get(),self.date.get(),self.date.get_date()+timedelta(days=3),service,float(price),self.discount.get(),self.address.get())
             self.run_query(query,parameters)
             self.message['text'] = "{}'s invoice added succesfully".format(self.name.get())
             self.message['fg'] = "green"
+
             self.name.delete(0,END)
             self.address.delete(0,END)
             self.ID_.delete(0,END)
             self.email.delete(0,END)
             self.service.delete(0,END)
+            self.discount.delete(0,END)
         else:
             self.message['text'] = "All spaces must be filled"
             self.message['fg'] = "red"
@@ -165,6 +180,9 @@ class InvoicesInterface:
         self.message['text'] = "Invoice deleted successfully"
         self.message['fg'] = "blue"
         self.get_invoices()
+
+    
+
 
 if __name__ == '__main__':
     window = Tk()
