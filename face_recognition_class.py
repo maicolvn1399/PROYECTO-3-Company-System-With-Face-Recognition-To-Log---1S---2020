@@ -8,7 +8,6 @@ import os
 import glob
 from pathlib import Path
 
-
 #Initialize variables
 face_locations = []
 face_encodings = []
