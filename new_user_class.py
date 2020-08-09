@@ -1,7 +1,11 @@
 #Class to register a new user
+import sqlite3
 
 users = []
+
 class NewUser:
+
+    users_database = "newUsers.db"
 
     def __init__(self,name,age,ID,email,address,images):
         self.name = name
@@ -63,25 +67,38 @@ class NewUser:
         print(users)
         print(len(users))
 
-    def appendUser(self):
-        users.append(self)
+    def run_query(self,query,parameters = ()):
+        with sqlite3.connect(self.users_database) as conn:
+            cursor = conn.cursor()
+            result = cursor.execute(query,parameters)
+            conn.commit()
+        return result
 
-    def readFile(self):
-        """This function reads the file of the users
-        and return the content in a list"""
-        path = "Users.txt"
-        file = open(path)
-        content = file.readlines()
-        file.close()
-        print(content)
-        return content
+    def validation(self,name, age, ID, email, address, image):
+        return len(name) != 0 and len(age) != 0 and len(ID) != 0 and len(email) != 0 and len(address) != 0 and len(image) != 0
 
-    def writeInFile(self):
-        """This function writes the new user on the file"""
-        path = "Users.txt"
-        file = open(path, "a")
-        data = self.getName()+","+str(self.getAge())+","+self.getAddress()+","+self.getEmail()+","+self.getID()+","+self.getImages()
-        file.write(data + "\n")
-        file.close()
+    def add_user(self):
+        if self.validation(self.name, self.age, self.ID, self.email, self.address, self.images):
+            query = "INSERT INTO newUsers VALUES(NULL,?,?,?,?,?,?)"
+            parameters = (self.name,self.age,self.ID,self.address,self.images,self.email)
+            self.run_query(query,parameters)
+        self.get_users()
+
+    def get_users(self):
+        list = []
+        #getting data
+        query = 'SELECT * FROM newUsers ORDER BY name DESC'
+        db_rows = self.run_query(query)
+        for row in db_rows:
+            print(row)
+            list += [row]
+        return list
+
+
+
+
+
+
+
 
 

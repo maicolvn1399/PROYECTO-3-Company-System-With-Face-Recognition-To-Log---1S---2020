@@ -74,15 +74,3 @@ class Invoice:
                     destination = "invoices"
                     shutil.move(filepath, destination)
                     print("Invoices moved")
-
-
-
-
-
-
-
-
-
-
-
-

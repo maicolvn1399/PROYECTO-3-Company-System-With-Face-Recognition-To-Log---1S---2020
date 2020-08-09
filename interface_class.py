@@ -10,7 +10,6 @@ import random
 import os
 from tkinter import ttk
 from tkcalendar import Calendar,DateEntry
-
 import sys
 
 class Window:
@@ -78,9 +77,8 @@ class Window:
             print(self.selectedImage)
             image = self.selectedImage
             user = NewUser(name, age, ID, email, address, image)
-            user.appendUser()
-            user.writeInFile()
-            user.readFile()
+            user.add_user()
+            user.get_users()
             #user.show()
             print("New user saved")
             self.entryName.delete(0,"end")
