@@ -23,20 +23,31 @@ class GetBankInformation:
         """Returns information from the user that is requesting the exchange rate"""
         print(self.myInformation)
         return self.myInformation
-
-    def getExchangeRate(self):
+    
+    def ColonToDolar(self,n):
         """Returns the exchange rate from BCCR"""
         result = requests.post(self.url,data = self.myInformation)
         index = result.text
         cut = index.find("NUM_VALOR")
         cut2 = index.find("/NUM_VALOR")
         exchangeRate = result.text[cut:cut2].replace("NUM_VALOR&gt;","").replace("&lt;","")
-        print(float(exchangeRate))
-        return float(exchangeRate)
-
+        print("el cambio del Colon a Dolar es de: "+ ("{0:.2f}".format((n/(float(exchangeRate))))) +" Dolares.")
+        
+        return"{0:.2f}".format(n/(float(exchangeRate)))
+    
+    def DolartoColon(self,n):
+        """Returns the exchange rate from BCCR"""
+        result = requests.post(self.url,data = self.myInformation)
+        index = result.text
+        cut = index.find("NUM_VALOR")
+        cut2 = index.find("/NUM_VALOR")
+        exchangeRate = result.text[cut:cut2].replace("NUM_VALOR&gt;","").replace("&lt;","")
+        print("el cambio de Dolar a colon es de : "+("{0:.0f}".format((n*(float(exchangeRate)))))+" Colones.")
+        return "{0:.0f}".format( n*(float(exchangeRate)))
+     
 info = GetBankInformation()
-info.getExchangeRate()
-
+info.ColonToDolar(1000)
+info.DolartoColon(1)
 
 
 
