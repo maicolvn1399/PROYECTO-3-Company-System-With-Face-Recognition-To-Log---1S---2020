@@ -104,3 +104,6 @@ class FaceRecognition:
         cv2.destroyAllWindows()
 
 
+
+
+

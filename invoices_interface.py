@@ -22,7 +22,7 @@ class InvoicesInterface:
 
     listCombo = []
 
-    def __init__(self, window):
+    def __init__(self,window):
         """Con sqlite"""
         self.windowInvoices = window
         self.windowInvoices.title("Invoices Window")
@@ -84,7 +84,7 @@ class InvoicesInterface:
         self.message = Label(frame, text="", fg='red')
         self.message.grid(row=10, column=0, columnspan=2, sticky=W + E)
 
-        self.tree = ttk.Treeview(height=10, columns=("#0", "#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8", "#9"))
+        self.tree = ttk.Treeview(self.windowInvoices,height=10, columns=("#0", "#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8", "#9"))
         self.tree.grid(row=11, column=0, columnspan=3)
         self.tree.heading("#0", text="Name", anchor=CENTER)
         self.tree.heading("#1", text="ID", anchor=CENTER)
@@ -96,12 +96,13 @@ class InvoicesInterface:
         self.tree.heading("#7", text="Discount", anchor=CENTER)
 
         # Buttons
-        Button(text="DELETE", command=self.delete_invoice).grid(row=12, column=0, sticky=W + E)
-        Button(text="Search invoices by date", command=self.search_invoices_interface).grid(row=12, column=1,
+        Button(self.windowInvoices,text="DELETE", command=self.delete_invoice).grid(row=12, column=0, sticky=W + E)
+        Button(self.windowInvoices,text="Search invoices by date", command=self.search_invoices_interface).grid(row=12, column=1,
                                                                                             sticky=W + E)
 
         # Filling rows of table
         self.get_invoices()
+
 
     def search_invoices_interface(self):
         self.windowSearchByDate = Toplevel()
@@ -562,7 +563,7 @@ class InvoicesInterface:
         name = self.searchtree.item(self.searchtree.selection())['values'][0]
         numberOfInvoice = self.searchtree.item(self.searchtree.selection())['text']
         print(name, numberOfInvoice)
-        pdf_file = name + " - " + str(numberOfInvoice) + ".pdf"
+        pdf_file = name+ ".pdf"
         self.open_pdf_file(pdf_file)
 
     def open_pdf_file(self, pdf_file):

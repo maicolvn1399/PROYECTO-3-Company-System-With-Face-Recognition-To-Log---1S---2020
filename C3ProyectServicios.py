@@ -7,7 +7,6 @@ class Servicio:
     # connection dir property
     db_name = 'database.db'
 
-
     def __init__(self, window):
         # Initializations 
         self.wind = window
@@ -75,7 +74,6 @@ class Servicio:
             a,b,c = row
             list += [b+" - "+"₡"+str(c)]
             print(list)
-
 
             self.tree.insert('', 0, text = row[1], values = row[2])
 
