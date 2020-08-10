@@ -35,7 +35,7 @@ class Invoice:
         else:
             pricesSplittedList = [str(self.invoiceService)]
 
-        doc = SimpleInvoice(self.invoiceName + " - " + str(self.invoiceNumber) + ".pdf")
+        doc = SimpleInvoice(self.invoiceName+".pdf")
         #Paid stamp
         doc.is_paid = False
 
