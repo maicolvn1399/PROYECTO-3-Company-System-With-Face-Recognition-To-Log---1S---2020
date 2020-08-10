@@ -1,4 +1,4 @@
-import sqlite3
+
 from tkinter import ttk
 from tkinter import *
 from datetime import datetime, date,timedelta
@@ -6,9 +6,13 @@ from tkcalendar import Calendar,DateEntry
 from C3ProyectServicios import Servicio
 from invoice_class import Invoice
 from email_class import SendEmail
+from bank_class import GetBankInformation
 from tkinter import messagebox
 import os,shutil
 import sqlite3
+
+currentExchange = GetBankInformation()
+currentExchange.getExchangeRate()
 
 class InvoicesInterface:
 
@@ -17,6 +21,10 @@ class InvoicesInterface:
     db_services = 'database.db'
 
     db_invoices_search = "invoices_search.db"
+
+    listCombo = []
+
+
 
     def __init__(self,window):
         """Con sqlite"""
@@ -58,11 +66,13 @@ class InvoicesInterface:
         # ***** Change to a combobox ****
 
         Label(frame, text="Service").grid(row=6, column=0)
-        n = StringVar()
-        self.service = ttk.Combobox(frame)
-        self.service["values"] = self.get_services()
-        self.service.set(self.get_services()[0])
-        self.service.grid(row=6, column=1)
+        #n = StringVar()
+        #self.service = ttk.Combobox(frame)
+        #self.service["values"] = self.get_services()
+        #self.service.set(self.get_services()[0])
+        #self.service.grid(row=6, column=1)
+
+        Button(frame,text="Select services",command=self.services_window).grid(row=6,column=1)
 
         Label(frame,text="Discount Percentaje").grid(row=7,column=0)
         self.discount = Entry(frame)
@@ -70,6 +80,8 @@ class InvoicesInterface:
 
         # Button create invoice
         Button(frame, text="Create Invoice",command=self.add_invoice).grid(row=8, columnspan=2,sticky=W+E)
+
+        #Button(frame, text="Create Invoice", command=self.add_invoice).grid(row=8, columnspan=2, sticky=W + E)
 
         #Output messages
         self.message = Label(frame,text="",fg='red')
@@ -128,6 +140,44 @@ class InvoicesInterface:
 
         Button(self.windowSearchByDate,text="Show Invoice as a PDF file",command=self.get_data_to_show_pdf).grid(row=6, column=0, sticky= W + E)
         Button(self.windowSearchByDate,text="Send Invoice to Email",command=self.search_for_email).grid(row=6, column=1, sticky= W + E)
+
+
+    def services_window(self):
+        self.services_wind = Toplevel()
+        self.services_wind.title("Select one or more services")
+        self.services_wind.minsize(width=100,height=100)
+        # Creating a Frame Container
+        frame = LabelFrame(self.services_wind, text="Select services")
+        frame.grid(row=0, column=0, columnspan=3, pady=20)
+
+        self.serviceCombo = ttk.Combobox(frame)
+        self.serviceCombo["values"] = self.get_services()
+        self.serviceCombo.set(self.get_services()[0])
+        self.serviceCombo.grid(row=6, column=1)
+
+        # Output messages
+        self.message_combobox_list = Label(frame, text="", fg='red')
+        self.message_combobox_list.grid(row=7, column=0, columnspan=2, sticky=W + E)
+
+        Button(frame, text="Add service", command=self.get_services_list).grid(row=8, column=1, sticky=W + E)
+
+    def get_services_list(self):
+        comboboxContent = self.serviceCombo.get()
+        servicesString = ""
+        priceString = ""
+        service = comboboxContent.replace(" - ₡","")
+        for i in service:
+            if i.isalpha():
+                servicesString += i
+            else:
+                priceString += i
+        self.listCombo.append((servicesString,priceString))
+
+        self.message_combobox_list['text'] = servicesString+ " has been added"
+        self.message_combobox_list['fg'] = "blue"
+
+        print(self.listCombo)
+        return self.listCombo
 
 
     def dates_validation(self):
@@ -218,26 +268,48 @@ class InvoicesInterface:
 
 
     def validation(self):
-        return len(self.name.get()) != 0 and len(self.date.get()) != 0 and len(self.address.get()) != 0 and len(self.service.get()) != 0 and len(self.ID_.get()) != 0 and len(self.email.get()) != 0
+        return len(self.name.get()) != 0 and len(self.date.get()) != 0 and len(self.address.get()) != 0 and len(self.ID_.get()) != 0 and len(self.email.get()) != 0
 
+        #len(self.get_services_list) != 0
     def add_invoice(self):
         if self.validation():
             query = "INSERT INTO invoices VALUES(NULL,?,?,?,?,?,?,?,?,?)"
-            service_text = self.service.get()
-            service_textCopy = service_text.replace(" - ₡","")
+            #service_text = self.service.get()
+            #service_textCopy = service_text.replace(" - ₡","")
             #print(service_text)
 
             price = ""
             service = ""
 
-            for i in service_textCopy:
+            """for i in service_textCopy:
                 if not i.isalpha():
                     price += i
                 else:
-                    service += i
+                    service += i"""
+
+            stringOfServices = ""
+            stringOfPrices = ""
+
+            for i in self.listCombo:
+                print(i)
+                service2 , price2 = i
+                stringOfServices += service2+","
+                stringOfPrices += price2+","
+
+            stringOfServices = stringOfServices[:-1]
+            stringOfPrices = stringOfPrices[:-1]
+            print("String of Services "+stringOfServices)
+            print("String of Prices " + stringOfPrices)
+
+
+
+
+            service1 = "CORREOS"
+            price1 = "12000"
+
 
             #parameters = (self.name.get(),self.date.get(),self.date.get_date()+timedelta(days=3),self.email.get(),self.address.get(),service,float(price),self.discount.get(),self.ID_.get())
-            parameters = (self.name.get(),self.ID_.get(),self.email.get(),self.date.get(),self.date.get_date()+timedelta(days=3),service,float(price),self.discount.get(),self.address.get())
+            parameters = (self.name.get(),self.ID_.get(),self.email.get(),self.date.get(),self.date.get_date()+timedelta(days=3),stringOfServices,stringOfPrices,self.discount.get(),self.address.get())
             self.run_query(query,parameters)
             nameForSearch = self.name.get()
             nameForInvoice = self.name.get()
@@ -247,7 +319,7 @@ class InvoicesInterface:
             self.address.delete(0,END)
             self.ID_.delete(0,END)
             self.email.delete(0,END)
-            self.service.delete(0,END)
+            #self.service.delete(0,END)
             self.discount.delete(0,END)
         else:
             self.message['text'] = "All spaces must be filled"
@@ -398,8 +470,6 @@ class InvoicesInterface:
                 newEmail = SendEmail(email,"invoices/"+pdf_file,date)
                 newEmail.send_email()
                 messagebox.showinfo("Email Sent","Your email has been sent to: "+email)
-            else:
-                messagebox.showerror("Email Not Sent","There was a problem sending the email")
 
 if __name__ == '__main__':
     window = Tk()

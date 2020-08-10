@@ -34,8 +34,7 @@ class GetBankInformation:
         print(float(exchangeRate))
         return float(exchangeRate)
 
-info = GetBankInformation()
-info.getExchangeRate()
+
 
 
 
