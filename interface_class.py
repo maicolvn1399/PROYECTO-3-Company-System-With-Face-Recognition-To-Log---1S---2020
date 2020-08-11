@@ -58,25 +58,25 @@ class Window2:
 
 #----Clase Servicios------------------------------------------------------------------------------------------
 class Servicio:
-    # connection dir property
+    # nombre de la base de datos
     db_name = 'database.db'
 
     def __init__(self, window):
-        # Initializations 
+        # Inicializacion 
         self.wind = window
         self.wind.title('3C: Company System With Face Recognition To Log')
 
-        # Creating a Frame Container 
+        # Crea frame para posicionar la creacion de servicio 
         frame = LabelFrame(self.wind, text = 'Registrar Nuevo Servicio')
         frame.grid(row = 0, column = 0, columnspan = 3, pady = 20)
 
-        # Name Input
+        # input de nombre del nuevo servicio
         Label(frame, text = 'Nombre: ').grid(row = 1, column = 0)
         self.name = Entry(frame)
         self.name.focus()
         self.name.grid(row = 1, column = 1)
 
-        # Price Input
+        # input del precio del servicio
         Label(frame, text = 'Precio: ').grid(row = 2, column = 0)
         self.price = Entry(frame)
         self.price.grid(row = 2, column = 1)
@@ -96,7 +96,7 @@ class Servicio:
         self.treeview.heading('#0', text = 'Nombre', anchor = CENTER)
         self.treeview.heading('#1', text = 'Precio', anchor = CENTER)
 
-        # botones
+        # botones con sus respectivas funcionalidades
         self.button1 = ttk.Button(self.wind,text = 'ELIMINAR', command = self.delete_product).grid(row = 5, column = 0, sticky = W + E)
         self.button1 = ttk.Button(self.wind,text = 'EDITAR', command = self.edit_product).grid(row = 5, column = 1, sticky = W + E,)
 
@@ -118,7 +118,7 @@ class Servicio:
         for element in self.records:
             self.treeview.delete(element)
         # actualiza los datos
-        query = 'SELECT * FROM product ORDER BY name DESC'
+        query = 'SELECT * FROM product ORDER BY name DESC'#muestra la tabla de la base de datos
         db_rows = self.run_query(query)
         # posiciona cada dato en la tabla
         for row in db_rows:
@@ -130,7 +130,7 @@ class Servicio:
     #agregar servicio de la base de datos
     def add_product(self):
         if self.validation():
-            query = 'INSERT INTO product VALUES(NULL, ?, ?)'
+            query = 'INSERT INTO product VALUES(NULL, ?, ?)'#agrega servicio a la base de datos y crea un ID unico para este
             parameters =  (self.name.get(), self.price.get())
             self.run_query(query, parameters)
             self.message['text'] = ' {} Fue agregado Satisfactoriamente'.format(self.name.get())
@@ -149,7 +149,7 @@ class Servicio:
             return
         self.message['text'] = ''
         name = self.treeview .item(self.treeview.selection())['text']
-        query = 'DELETE FROM product WHERE name = ?'
+        query = 'DELETE FROM product WHERE name = ?'#elimina el servicio de la base de datos
         self.run_query(query, (name, ))
         self.message['text'] = '  {} fue eliminado Satisfactoriamente'.format(name)
         self.get_products()
@@ -180,24 +180,19 @@ class Servicio:
         Label(self.edit_wind, text = 'Precio Nuevo:').grid(row = 3, column = 1)
         new_price= Entry(self.edit_wind)
         new_price.grid(row = 3, column = 2)
-
+        #ejecuta la funcion edit-records
         Button(self.edit_wind, text = 'Actualizar', command = lambda: self.edit_records(new_name.get(), name, new_price.get(), old_price)).grid(row = 4, column = 2, sticky = W)
         self.edit_wind.mainloop()
         #Actualiza los cambios
     def edit_records(self, new_name, name, new_price, old_price):
-        query = 'UPDATE product SET name = ?, price = ? WHERE name = ? AND price = ?'
+        query = 'UPDATE product SET name = ?, price = ? WHERE name = ? AND price = ?'#actualiza los datos de la base de datos
         parameters = (new_name, new_price,name, old_price)
         self.run_query(query, parameters)
         self.edit_wind.destroy()
         self.message['text'] = '  {} fue actualizado satisfactoriamente'.format(name)
         self.get_products()
         
-#----Clase Facturas-------------------------------------------------------------------------------------------
 
-
-#----clase Banco----------------------------------------------------------------------------------------------
-
-        
 #-------------------------------------------------------------------------------------------------------------
 
 def main():
