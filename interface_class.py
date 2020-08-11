@@ -81,52 +81,53 @@ class Servicio:
         self.price = Entry(frame)
         self.price.grid(row = 2, column = 1)
 
-        # Button Add Product 
+        # Guarda los datos del nuevo servicio
         ttk.Button(frame, text = 'Guardar', command = self.add_product).grid(row = 3, columnspan = 2, sticky = W + E)
 
-        # Output Messages 
+        # configuacion de mensajes
         self.message = Label(self.wind,text = '', fg = 'green')
         self.message.grid(row = 3, column = 0, columnspan = 2, sticky = W + E)
 
-        # Table
+        # Tabla donde se muestran los datos
+        #se crea la tabla y se define la ubicacion y e tamaño
 
         self.treeview = ttk.Treeview(self.wind,height = 10, columns = 2)
         self.treeview.grid(row = 4, column = 0, columnspan = 2)
         self.treeview.heading('#0', text = 'Nombre', anchor = CENTER)
         self.treeview.heading('#1', text = 'Precio', anchor = CENTER)
 
-        # Buttons
+        # botones
         self.button1 = ttk.Button(self.wind,text = 'ELIMINAR', command = self.delete_product).grid(row = 5, column = 0, sticky = W + E)
         self.button1 = ttk.Button(self.wind,text = 'EDITAR', command = self.edit_product).grid(row = 5, column = 1, sticky = W + E,)
 
-        # Filling the Rows
+        # actualiza los datos
         self.get_products()
 
-    # Function to Execute Database Querys
+    # accede a la base de datos
     def run_query(self, query, parameters = ()):
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
+        with sqlite3.connect(self.db_name) as conn:#ingresa a la base de datos
+            cursor = conn.cursor()#encuentr posicion
             result = cursor.execute(query, parameters)
             conn.commit()
         return result
 
-    # Get Products from Database
+    # obtiene los servicios de la base de datos
     def get_products(self):
-        # cleaning Table 
+        # limpia la tabla 
         self.records = self.treeview.get_children()
         for element in self.records:
             self.treeview.delete(element)
-        # getting data
+        # actualiza los datos
         query = 'SELECT * FROM product ORDER BY name DESC'
         db_rows = self.run_query(query)
-        # filling data
+        # posiciona cada dato en la tabla
         for row in db_rows:
             self.treeview.insert('', 0, text = row[1], values = row[2])
 
     # User Input Validation
     def validation(self):
         return len(self.name.get()) != 0 and len(self.price.get()) != 0
-
+    #agregar servicio de la base de datos
     def add_product(self):
         if self.validation():
             query = 'INSERT INTO product VALUES(NULL, ?, ?)'
@@ -138,7 +139,7 @@ class Servicio:
         else:
             self.message['text'] = 'Digite el nombre y el precio'
         self.get_products()
-
+    #elimina servicio de la base de datos
     def delete_product(self):
         self.message['text'] = ''
         try:
@@ -152,7 +153,7 @@ class Servicio:
         self.run_query(query, (name, ))
         self.message['text'] = '  {} fue eliminado Satisfactoriamente'.format(name)
         self.get_products()
-
+    #actualiza el servicio
     def edit_product(self):
         self.message['text'] = ''
         try:
@@ -160,29 +161,29 @@ class Servicio:
         except IndexError as e:
             self.message['text'] = 'Seleccione un servicio por favor'
             return
-        name = self.treeview .item(self.treeview.selection())['text']
+        name = self.treeview .item(self.treeview.selection())['text']#selecciona servicio de la  tabla
         old_price = self.treeview .item(self.treeview.selection())['values'][0]
         self.edit_wind = Toplevel()
         self.edit_wind.title = 'Editar Servicio'
-        # Old description
+        # nombre del servicio
         Label(self.edit_wind, text = 'Nombre:').grid(row = 0, column = 1)
         Entry(self.edit_wind, textvariable = StringVar(self.edit_wind, value = name), state = 'readonly').grid(row = 0, column = 2)
-        # New description
+        # nuevo nombre del servicio
         Label(self.edit_wind, text = 'Nuevo Nombre:').grid(row = 1, column = 1)
         new_name = Entry(self.edit_wind)
         new_name.grid(row = 1, column = 2)
 
-        # Old Price 
+        # Precio del servicio 
         Label(self.edit_wind, text = 'Precio:').grid(row = 2, column = 1)
         Entry(self.edit_wind, textvariable = StringVar(self.edit_wind, value = old_price), state = 'readonly').grid(row = 2, column = 2)
-        # New Price
+        #Nuevo precio del servico
         Label(self.edit_wind, text = 'Precio Nuevo:').grid(row = 3, column = 1)
         new_price= Entry(self.edit_wind)
         new_price.grid(row = 3, column = 2)
 
         Button(self.edit_wind, text = 'Actualizar', command = lambda: self.edit_records(new_name.get(), name, new_price.get(), old_price)).grid(row = 4, column = 2, sticky = W)
         self.edit_wind.mainloop()
-
+        #Actualiza los cambios
     def edit_records(self, new_name, name, new_price, old_price):
         query = 'UPDATE product SET name = ?, price = ? WHERE name = ? AND price = ?'
         parameters = (new_name, new_price,name, old_price)
